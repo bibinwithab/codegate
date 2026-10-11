@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 from typing import Optional
 
-from codegate.core.models import CapabilityToken
+from codevoight.core.models import CapabilityToken
 
 
 DEFAULT_TTL_SECONDS = 1800.0  # 30 minutes

@@ -2,8 +2,8 @@ import time
 from pathlib import Path
 import pytest
 
-from codegate.core.models import CapabilityToken
-from codegate.core.security import (
+from codevoight.core.models import CapabilityToken
+from codevoight.core.security import (
     get_or_create_secret,
     sign_token,
     verify_token,
@@ -11,7 +11,7 @@ from codegate.core.security import (
 
 
 def test_get_or_create_secret(tmp_path: Path):
-    secret_dir = tmp_path / ".codegate"
+    secret_dir = tmp_path / ".codevoight"
     secret1 = get_or_create_secret(secret_dir)
     assert len(secret1) >= 32
     assert (secret_dir / ".secret").exists()

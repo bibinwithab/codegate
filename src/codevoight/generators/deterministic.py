@@ -3,13 +3,13 @@ from __future__ import annotations
 import re
 import uuid
 from typing import List, Set
-from codegate.core.models import (
+from codevoight.core.models import (
     QuizOption,
     QuizQuestion,
     QuizResult,
     QuizSubmission,
 )
-from codegate.generators.base import BaseQuizEvaluator, BaseQuizGenerator
+from codevoight.generators.base import BaseQuizEvaluator, BaseQuizGenerator
 
 
 class DeterministicQuizGenerator(BaseQuizGenerator):

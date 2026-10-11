@@ -3,13 +3,13 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "codegate"
+name = "codevoight"
 version = "0.1.0"
-description = "Universal Quiz-Gated MCP Commit Server and Git Enforcement Gate"
+description = "Voight-Kampff Human Comprehension Gate for AI Coding Agents and Git Commits"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
-    { name = "CodeGate Contributors" }
+    { name = "CodeVoight Contributors" }
 ]
 dependencies = [
     "mcp>=1.2.0",
@@ -24,7 +24,7 @@ dev = [
 ]
 
 [project.scripts]
-codegate = "codegate.cli:main"
+codevoight = "codevoight.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

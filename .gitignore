@@ -219,5 +219,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# CodeGate workspace state and secrets
+# CodeVoight workspace state and secrets
+.codevoight/
+.quizgate/
 .codegate/

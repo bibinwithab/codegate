@@ -3,9 +3,9 @@ from __future__ import annotations
 import os
 from typing import List, Optional
 
-from codegate.core.models import QuizQuestion
-from codegate.generators.base import BaseQuizGenerator
-from codegate.generators.deterministic import DeterministicQuizGenerator
+from codevoight.core.models import QuizQuestion
+from codevoight.generators.base import BaseQuizGenerator
+from codevoight.generators.deterministic import DeterministicQuizGenerator
 
 
 class LLMQuizGenerator(BaseQuizGenerator):
@@ -13,7 +13,7 @@ class LLMQuizGenerator(BaseQuizGenerator):
 
     def __init__(self, fallback_generator: Optional[BaseQuizGenerator] = None):
         self.fallback = fallback_generator or DeterministicQuizGenerator()
-        self.api_key = os.getenv("CODEGATE_LLM_API_KEY") or os.getenv("OPENAI_API_KEY")
+        self.api_key = os.getenv("CODEVOIGHT_LLM_API_KEY") or os.getenv("QUIZGATE_LLM_API_KEY") or os.getenv("CODEGATE_LLM_API_KEY") or os.getenv("OPENAI_API_KEY")
 
     def generate_quiz(self, diff_text: str, description: str = "") -> List[QuizQuestion]:
         # If no LLM credentials provided or in offline/test mode, seamlessly use deterministic engine

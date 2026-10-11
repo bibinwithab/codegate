@@ -1,1 +1,1 @@
-"""CodeGate test suite."""
+"""CodeVoight test suite."""

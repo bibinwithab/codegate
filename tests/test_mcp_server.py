@@ -3,12 +3,12 @@ import time
 from pathlib import Path
 import pytest
 
-from codegate.core.diff import compute_diff_hash
-from codegate.core.models import SessionStatus
-from codegate.core.security import get_or_create_secret, sign_token
-from codegate.db.repository import StateRepository
-from codegate.git.runner import GitRunner
-from codegate.server import create_server
+from codevoight.core.diff import compute_diff_hash
+from codevoight.core.models import SessionStatus
+from codevoight.core.security import get_or_create_secret, sign_token
+from codevoight.db.repository import StateRepository
+from codevoight.git.runner import GitRunner
+from codevoight.server import create_server
 
 
 def init_git_repo(path: Path) -> GitRunner:
@@ -34,7 +34,7 @@ async def test_mcp_server_flow(tmp_path: Path):
     )
     assert not stage_res.is_error
     text_out = stage_res.content[0].text
-    assert "[CODEGATE: CHANGES STAGED]" in text_out
+    assert "[CODEVOIGHT: CHANGES STAGED]" in text_out
     assert "Session ID :" in text_out
 
     # Extract session id from output
@@ -57,15 +57,15 @@ async def test_mcp_server_flow(tmp_path: Path):
     )
     commit_text = commit_attempt.content[0].text
     assert "[ACCESS DENIED]" in commit_text
-    assert "must run 'codegate quiz" in commit_text
+    assert "must run 'codevoight quiz" in commit_text
 
     # 4. Simulate developer passing quiz via CLI / StateRepository
-    codegate_dir = tmp_path / ".codegate"
-    repo = StateRepository(codegate_dir / "state.db")
+    codevoight_dir = tmp_path / ".codevoight"
+    repo = StateRepository(codevoight_dir / "state.db")
     session = repo.get_session(session_id)
     assert session is not None
 
-    secret_key = get_or_create_secret(codegate_dir)
+    secret_key = get_or_create_secret(codevoight_dir)
     token = sign_token(session_id, session.diff_hash, secret_key)
     repo.update_session_status(session_id, SessionStatus.APPROVED, token.serialize())
 

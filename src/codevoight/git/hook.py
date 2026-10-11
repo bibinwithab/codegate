@@ -5,15 +5,15 @@ import stat
 from pathlib import Path
 from typing import Optional, Tuple
 
-from codegate.core.diff import compute_diff_hash
-from codegate.core.models import CapabilityToken
-from codegate.core.security import get_or_create_secret, verify_token
-from codegate.db.repository import StateRepository
-from codegate.git.runner import GitRunner
+from codevoight.core.diff import compute_diff_hash
+from codevoight.core.models import CapabilityToken
+from codevoight.core.security import get_or_create_secret, verify_token
+from codevoight.db.repository import StateRepository
+from codevoight.git.runner import GitRunner
 
 
 HOOK_SCRIPT = """#!/bin/sh
-# CodeGate Pre-Commit Verification Hook
+# CodeVoight Pre-Commit Verification Hook
 # Enforces human comprehension quiz verification before git commit.
 
 if [ -f ".venv/Scripts/python.exe" ]; then
@@ -27,17 +27,17 @@ elif command -v python3 >/dev/null 2>&1; then
 elif command -v python >/dev/null 2>&1; then
     PYTHON=python
 else
-    echo "[CODEGATE] Error: Python runtime not found in PATH."
+    echo "[CODEVOIGHT] Error: Python runtime not found in PATH."
     exit 1
 fi
 
-$PYTHON -m codegate.cli verify-commit
+$PYTHON -m codevoight.cli verify-commit
 EXIT_CODE=$?
 
 if [ $EXIT_CODE -ne 0 ]; then
     echo ""
-    echo "[CODEGATE] COMMIT BLOCKED: Staged changes require human quiz approval."
-    echo "[CODEGATE] To approve, run: codegate quiz"
+    echo "[CODEVOIGHT] COMMIT BLOCKED: Staged changes require human comprehension approval."
+    echo "[CODEVOIGHT] To approve, run: codevoight quiz"
     echo ""
     exit 1
 fi
@@ -83,10 +83,16 @@ def verify_staged_commit(workspace_root: Optional[Path] = None) -> Tuple[bool, s
 
     diff_hash = compute_diff_hash(staged_diff)
 
-    codegate_dir = root / ".codegate"
-    db_path = codegate_dir / "state.db"
+    codevoight_dir = root / ".codevoight"
+    if not codevoight_dir.exists():
+        if (root / ".quizgate").exists():
+            codevoight_dir = root / ".quizgate"
+        elif (root / ".codegate").exists():
+            codevoight_dir = root / ".codegate"
+
+    db_path = codevoight_dir / "state.db"
     if not db_path.exists():
-        return False, "No CodeGate state found. Run 'codegate quiz' to approve staged changes."
+        return False, "No CodeVoight state found. Run 'codevoight quiz' to approve staged changes."
 
     repo = StateRepository(db_path)
     session = repo.find_valid_approved_session(diff_hash)
@@ -94,7 +100,7 @@ def verify_staged_commit(workspace_root: Optional[Path] = None) -> Tuple[bool, s
         return False, f"Diff hash {diff_hash[:12]} has not been approved via quiz."
 
     # Verify cryptographic signature
-    secret_key = get_or_create_secret(codegate_dir)
+    secret_key = get_or_create_secret(codevoight_dir)
     try:
         token = CapabilityToken.parse(session.capability_token)
     except Exception as e:

@@ -7,33 +7,38 @@ from typing import Optional
 
 import click
 
-from codegate.core.diff import compute_diff_hash, normalize_text
-from codegate.core.models import (
+from codevoight.core.diff import compute_diff_hash, normalize_text
+from codevoight.core.models import (
     QuizSubmission,
     SessionStatus,
     StagedSession,
 )
-from codegate.core.security import get_or_create_secret, sign_token
-from codegate.db.repository import StateRepository
-from codegate.generators.deterministic import (
+from codevoight.core.security import get_or_create_secret, sign_token
+from codevoight.db.repository import StateRepository
+from codevoight.generators.deterministic import (
     DeterministicQuizEvaluator,
     DeterministicQuizGenerator,
 )
-from codegate.git.hook import install_pre_commit_hook, verify_staged_commit
-from codegate.git.runner import GitRunner
+from codevoight.git.hook import install_pre_commit_hook, verify_staged_commit
+from codevoight.git.runner import GitRunner
 
 
 def get_repo_and_db_paths() -> tuple[Path, Path]:
     runner = GitRunner()
     root = (runner.get_repo_root() or Path.cwd()).resolve()
-    codegate_dir = root / ".codegate"
-    db_path = codegate_dir / "state.db"
-    return codegate_dir, db_path
+    codevoight_dir = root / ".codevoight"
+    if not codevoight_dir.exists():
+        if (root / ".quizgate").exists():
+            codevoight_dir = root / ".quizgate"
+        elif (root / ".codegate").exists():
+            codevoight_dir = root / ".codegate"
+    db_path = codevoight_dir / "state.db"
+    return codevoight_dir, db_path
 
 
 @click.group()
 def main() -> None:
-    """CodeGate: Quiz-Gated MCP Commit Server and Git Verification Gate."""
+    """CodeVoight: Voight-Kampff Comprehension Gate for AI Commits."""
     pass
 
 
@@ -41,7 +46,7 @@ def main() -> None:
 @click.argument("session_id", required=False)
 def run_quiz(session_id: Optional[str] = None) -> None:
     """Take comprehension quiz for a staged change to unlock git commit."""
-    codegate_dir, db_path = get_repo_and_db_paths()
+    codevoight_dir, db_path = get_repo_and_db_paths()
     repo = StateRepository(db_path)
 
     session = None
@@ -54,11 +59,11 @@ def run_quiz(session_id: Optional[str] = None) -> None:
         session = repo.get_latest_pending_session()
         if not session:
             click.echo("[INFO] No pending quiz sessions found.", err=True)
-            click.echo("Stage code changes via MCP or 'codegate stage' first.")
+            click.echo("Stage code changes via MCP or 'codevoight stage' first.")
             sys.exit(0)
 
     click.echo("=" * 60)
-    click.echo(f"CODEGATE COMPREHENSION QUIZ")
+    click.echo(f"CODEVOIGHT COMPREHENSION QUIZ")
     click.echo(f"Session ID : {session.session_id}")
     click.echo(f"Diff Hash  : {session.diff_hash[:16]}...")
     if session.description:
@@ -99,7 +104,7 @@ def run_quiz(session_id: Optional[str] = None) -> None:
 
     click.echo("\n" + "=" * 60)
     if result.passed:
-        secret_key = get_or_create_secret(codegate_dir)
+        secret_key = get_or_create_secret(codevoight_dir)
         token = sign_token(session.session_id, session.diff_hash, secret_key)
         repo.update_session_status(session.session_id, SessionStatus.APPROVED, token.serialize())
 
@@ -112,17 +117,17 @@ def run_quiz(session_id: Optional[str] = None) -> None:
         click.echo("[LOCKED] Commit permission DENIED. Review the following feedback:")
         for fb in result.feedback:
             click.echo(f"  * {fb}")
-        click.echo("\nReview the diff and run 'codegate quiz' to try again.")
+        click.echo("\nReview the diff and run 'codevoight quiz' to try again.")
         sys.exit(1)
     click.echo("=" * 60)
 
 
 @main.command("status")
 def show_status() -> None:
-    """View active and recent CodeGate staging sessions."""
+    """View active and recent CodeVoight staging sessions."""
     _, db_path = get_repo_and_db_paths()
     if not db_path.exists():
-        click.echo("[INFO] No CodeGate database found in current repository.")
+        click.echo("[INFO] No CodeVoight database found in current repository.")
         return
 
     repo = StateRepository(db_path)
@@ -147,7 +152,7 @@ def manage_hook(action: str) -> None:
     if action == "install":
         success, msg = install_pre_commit_hook()
         if success:
-            click.echo(f"[SUCCESS] CodeGate pre-commit hook installed to: {msg}")
+            click.echo(f"[SUCCESS] CodeVoight pre-commit hook installed to: {msg}")
         else:
             click.echo(f"[ERROR] Failed to install hook: {msg}", err=True)
             sys.exit(1)
@@ -165,7 +170,7 @@ def run_verify_commit() -> None:
     """Internal entrypoint invoked directly by .git/hooks/pre-commit."""
     success, msg = verify_staged_commit()
     if not success:
-        click.echo(f"[CODEGATE] {msg}", err=True)
+        click.echo(f"[CODEVOIGHT] {msg}", err=True)
         sys.exit(1)
     sys.exit(0)
 
@@ -187,7 +192,7 @@ def stage_from_cli(files: tuple[str, ...], description: str) -> None:
         return
 
     import uuid
-    codegate_dir, db_path = get_repo_and_db_paths()
+    codevoight_dir, db_path = get_repo_and_db_paths()
     repo = StateRepository(db_path)
     diff_hash = compute_diff_hash(staged_diff)
 
@@ -207,7 +212,7 @@ def stage_from_cli(files: tuple[str, ...], description: str) -> None:
 
     repo.create_session(session, questions)
     click.echo(f"[SUCCESS] Staged session created: {session.session_id}")
-    click.echo(f"Run 'codegate quiz {session.session_id}' to take the quiz and unlock commit.")
+    click.echo(f"Run 'codevoight quiz {session.session_id}' to take the quiz and unlock commit.")
 
 
 if __name__ == "__main__":

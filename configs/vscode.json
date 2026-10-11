@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "codegate": {
+    "codevoight": {
       "command": "python",
-      "args": ["-m", "codegate.server"],
+      "args": ["-m", "codevoight.server"],
       "disabled": false,
       "autoApprove": []
     }

@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from codegate.core.diff import normalize_text
+from codevoight.core.diff import normalize_text
 
 
 class GitRunner:

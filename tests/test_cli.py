@@ -2,17 +2,17 @@ import time
 from pathlib import Path
 from click.testing import CliRunner
 
-from codegate.cli import main
-from codegate.core.diff import compute_diff_hash
-from codegate.core.models import QuizOption, QuizQuestion, SessionStatus, StagedSession
-from codegate.db.repository import StateRepository
+from codevoight.cli import main
+from codevoight.core.diff import compute_diff_hash
+from codevoight.core.models import QuizOption, QuizQuestion, SessionStatus, StagedSession
+from codevoight.db.repository import StateRepository
 
 
 def test_cli_help():
     runner = CliRunner()
     result = runner.invoke(main, ["--help"])
     assert result.exit_code == 0
-    assert "CodeGate: Quiz-Gated MCP Commit Server" in result.output
+    assert "CodeVoight: Voight-Kampff Comprehension Gate" in result.output
 
 
 def test_cli_status(tmp_path: Path, monkeypatch):
@@ -23,11 +23,11 @@ def test_cli_status(tmp_path: Path, monkeypatch):
     # Initial status without DB
     result_empty = runner.invoke(main, ["status"])
     assert result_empty.exit_code == 0
-    assert "No CodeGate database found" in result_empty.output
+    assert "No CodeVoight database found" in result_empty.output
 
-    # Create dummy session in .codegate
-    codegate_dir = tmp_path / ".codegate"
-    repo = StateRepository(codegate_dir / "state.db")
+    # Create dummy session in .codevoight
+    codevoight_dir = tmp_path / ".codevoight"
+    repo = StateRepository(codevoight_dir / "state.db")
     now = time.time()
     session = StagedSession(
         session_id="sess-cli-1",
@@ -51,8 +51,8 @@ def test_cli_quiz_pass(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     runner = CliRunner()
 
-    codegate_dir = tmp_path / ".codegate"
-    repo = StateRepository(codegate_dir / "state.db")
+    codevoight_dir = tmp_path / ".codevoight"
+    repo = StateRepository(codevoight_dir / "state.db")
     now = time.time()
     diff_text = "--- a/x.py\n+++ b/x.py\n+def foo(): pass\n"
     diff_hash = compute_diff_hash(diff_text)
@@ -99,8 +99,8 @@ def test_cli_quiz_fail(tmp_path: Path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     runner = CliRunner()
 
-    codegate_dir = tmp_path / ".codegate"
-    repo = StateRepository(codegate_dir / "state.db")
+    codevoight_dir = tmp_path / ".codevoight"
+    repo = StateRepository(codevoight_dir / "state.db")
     now = time.time()
     diff_text = "--- a/x.py\n+++ b/x.py\n+def foo(): pass\n"
     diff_hash = compute_diff_hash(diff_text)

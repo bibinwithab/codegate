@@ -4,7 +4,7 @@ import difflib
 import hashlib
 from typing import List, Optional
 
-from codegate.core.models import StagedFile
+from codevoight.core.models import StagedFile
 
 
 def normalize_text(text: Optional[str]) -> str:

@@ -1,10 +1,10 @@
 {
   "mcpServers": {
-    "codegate": {
+    "codevoight": {
       "command": "python",
       "args": [
         "-m",
-        "codegate.server"
+        "codevoight.server"
       ]
     }
   }

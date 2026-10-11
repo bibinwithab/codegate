@@ -29,7 +29,7 @@ def load_dotenv(env_path: Optional[Path] = None) -> None:
 
 def get_token_ttl() -> float:
     """Return capability token TTL in seconds (default: 1800.0)."""
-    val = os.getenv("CODEGATE_TOKEN_TTL")
+    val = os.getenv("CODEVOIGHT_TOKEN_TTL") or os.getenv("QUIZGATE_TOKEN_TTL") or os.getenv("CODEGATE_TOKEN_TTL")
     if val:
         try:
             return float(val)
@@ -40,7 +40,7 @@ def get_token_ttl() -> float:
 
 def get_passing_score() -> float:
     """Return required quiz passing score between 0.0 and 1.0 (default: 1.0)."""
-    val = os.getenv("CODEGATE_PASSING_SCORE")
+    val = os.getenv("CODEVOIGHT_PASSING_SCORE") or os.getenv("QUIZGATE_PASSING_SCORE") or os.getenv("CODEGATE_PASSING_SCORE")
     if val:
         try:
             score = float(val)

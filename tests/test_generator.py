@@ -1,5 +1,5 @@
-from codegate.core.models import QuizSubmission
-from codegate.generators.deterministic import (
+from codevoight.core.models import QuizSubmission
+from codevoight.generators.deterministic import (
     DeterministicQuizEvaluator,
     DeterministicQuizGenerator,
 )

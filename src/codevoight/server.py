@@ -12,30 +12,42 @@ try:
 except ImportError:
     from mcp.server.fastmcp import FastMCP as MCPServer  # type: ignore
 
-from codegate.core.diff import compute_diff_hash, normalize_text
-from codegate.core.models import CapabilityToken, SessionStatus, StagedSession
-from codegate.core.security import get_or_create_secret, verify_token
-from codegate.db.repository import StateRepository
-from codegate.generators.deterministic import DeterministicQuizGenerator
-from codegate.git.runner import GitRunner
+from codevoight.core.diff import compute_diff_hash, normalize_text
+from codevoight.core.models import CapabilityToken, SessionStatus, StagedSession
+from codevoight.core.security import get_or_create_secret, verify_token
+from codevoight.db.repository import StateRepository
+from codevoight.generators.deterministic import DeterministicQuizGenerator
+from codevoight.git.runner import GitRunner
 
 
 def create_server(workspace_root: Optional[Path] = None) -> MCPServer:
-    ws_env = os.getenv("CODEGATE_WORKSPACE") or os.getenv("WORKSPACE")
+    ws_env = (
+        os.getenv("CODEVOIGHT_WORKSPACE")
+        or os.getenv("QUIZGATE_WORKSPACE")
+        or os.getenv("CODEGATE_WORKSPACE")
+        or os.getenv("WORKSPACE")
+    )
     if ws_env:
         root = Path(ws_env).resolve()
     else:
         root = (workspace_root or GitRunner().get_repo_root() or Path.cwd()).resolve()
-    codegate_dir = root / ".codegate"
-    db_path = codegate_dir / "state.db"
+
+    codevoight_dir = root / ".codevoight"
+    if not codevoight_dir.exists():
+        if (root / ".quizgate").exists():
+            codevoight_dir = root / ".quizgate"
+        elif (root / ".codegate").exists():
+            codevoight_dir = root / ".codegate"
+
+    db_path = codevoight_dir / "state.db"
 
     repo = StateRepository(db_path)
     git_runner = GitRunner(root)
     generator = DeterministicQuizGenerator()
 
     server = MCPServer(
-        name="codegate",
-        instructions="CodeGate intercepts and verifies code changes before Git commits.",
+        name="codevoight",
+        instructions="CodeVoight: Voight-Kampff human comprehension gate for AI code changes before Git commits.",
     )
 
     @server.tool()
@@ -88,19 +100,19 @@ def create_server(workspace_root: Optional[Path] = None) -> MCPServer:
         repo.create_session(session, questions)
 
         return (
-            f"[CODEGATE: CHANGES STAGED]\n"
+            f"[CODEVOIGHT: CHANGES STAGED]\n"
             f"Session ID : {session_id}\n"
             f"Diff Hash  : {diff_hash[:16]}...\n"
             f"Files      : {', '.join(staged_paths)}\n"
             f"Questions  : {len(questions)} generated\n\n"
             f"ACTION REQUIRED:\n"
-            f"Tell the developer: 'Please run \"codegate quiz {session_id}\" in your terminal "
+            f"Tell the developer: 'Please run \"codevoight quiz {session_id}\" in your terminal "
             f"to verify your understanding and unlock the commit gate.'"
         )
 
     @server.tool()
     def get_gate_status(session_id: str = "") -> str:
-        """Check the authorization status of a CodeGate staging session.
+        """Check the authorization status of a CodeVoight staging session.
 
         Args:
             session_id: Optional session identifier. If omitted, checks latest pending or current staged diff.
@@ -150,13 +162,13 @@ def create_server(workspace_root: Optional[Path] = None) -> MCPServer:
         if session.status != SessionStatus.APPROVED:
             return (
                 f"[ACCESS DENIED] Session '{session_id}' status is '{session.status.value}'. "
-                f"The human developer must run 'codegate quiz {session_id}' to pass verification before committing."
+                f"The human developer must run 'codevoight quiz {session_id}' to pass verification before committing."
             )
 
         if not session.capability_token:
             return "[ACCESS DENIED] No capability token found for this session."
 
-        secret_key = get_or_create_secret(codegate_dir)
+        secret_key = get_or_create_secret(codevoight_dir)
         try:
             token = CapabilityToken.parse(session.capability_token)
         except Exception as e:
@@ -183,7 +195,7 @@ def create_server(workspace_root: Optional[Path] = None) -> MCPServer:
         # Consume token to prevent replay
         repo.consume_session_token(session_id)
 
-        return f"[COMMIT SUCCESSFUL] CodeGate gate passed!\n{output}"
+        return f"[COMMIT SUCCESSFUL] CodeVoight gate passed!\n{output}"
 
     return server
 

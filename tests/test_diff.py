@@ -1,10 +1,10 @@
-from codegate.core.diff import (
+from codevoight.core.diff import (
     compute_diff_hash,
     generate_diff,
     generate_file_diff,
     normalize_text,
 )
-from codegate.core.models import StagedFile
+from codevoight.core.models import StagedFile
 
 
 def test_normalize_text():

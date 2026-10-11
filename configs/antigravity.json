@@ -1,10 +1,10 @@
 {
   "mcpServers": {
-    "codegate": {
+    "codevoight": {
       "command": "C:\\Users\\jbibingraceson\\projects\\codegate\\.venv\\Scripts\\python.exe",
       "args": [
         "-m",
-        "codegate.server"
+        "codevoight.server"
       ]
     }
   }

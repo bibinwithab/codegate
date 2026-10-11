@@ -1,13 +1,13 @@
 import time
 from pathlib import Path
 
-from codegate.core.models import (
+from codevoight.core.models import (
     QuizOption,
     QuizQuestion,
     SessionStatus,
     StagedSession,
 )
-from codegate.db.repository import StateRepository
+from codevoight.db.repository import StateRepository
 
 
 def test_repository_crud(tmp_path: Path):

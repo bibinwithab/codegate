@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List
 
-from codegate.core.models import QuizQuestion, QuizResult, QuizSubmission
+from codevoight.core.models import QuizQuestion, QuizResult, QuizSubmission
 
 
 class BaseQuizGenerator(ABC):

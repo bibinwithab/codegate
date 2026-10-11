@@ -7,13 +7,13 @@ from pathlib import Path
 from contextlib import contextmanager
 from typing import Iterator, List, Optional
 
-from codegate.core.models import (
+from codevoight.core.models import (
     QuizOption,
     QuizQuestion,
     SessionStatus,
     StagedSession,
 )
-from codegate.db.schema import init_db
+from codevoight.db.schema import init_db
 
 
 class StateRepository:
