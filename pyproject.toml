@@ -11,16 +11,37 @@ requires-python = ">=3.10"
 authors = [
     { name = "CodeVoight Contributors" }
 ]
+license = "MIT"
+keywords = ["mcp", "git", "ai", "commit-gate", "voight-kampff", "comprehension", "cursor", "antigravity"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Version Control :: Git",
+    "Topic :: Security",
+]
 dependencies = [
     "mcp>=1.2.0",
     "pydantic>=2.6.0",
     "click>=8.1.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/bibinwithab/codevoight"
+Repository = "https://github.com/bibinwithab/codevoight"
+Issues = "https://github.com/bibinwithab/codevoight/issues"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
+    "build>=1.0.0",
+    "twine>=5.0.0",
 ]
 
 [project.scripts]
