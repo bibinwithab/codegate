@@ -16,12 +16,16 @@ HOOK_SCRIPT = """#!/bin/sh
 # CodeGate Pre-Commit Verification Hook
 # Enforces human comprehension quiz verification before git commit.
 
-if command -v python3 >/dev/null 2>&1; then
+if [ -f ".venv/Scripts/python.exe" ]; then
+    PYTHON=".venv/Scripts/python.exe"
+elif [ -f ".venv/bin/python" ]; then
+    PYTHON=".venv/bin/python"
+elif command -v py >/dev/null 2>&1; then
+    PYTHON=py
+elif command -v python3 >/dev/null 2>&1; then
     PYTHON=python3
 elif command -v python >/dev/null 2>&1; then
     PYTHON=python
-elif command -v py >/dev/null 2>&1; then
-    PYTHON=py
 else
     echo "[CODEGATE] Error: Python runtime not found in PATH."
     exit 1

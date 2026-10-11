@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import time
 import uuid
 from pathlib import Path
@@ -20,7 +21,11 @@ from codegate.git.runner import GitRunner
 
 
 def create_server(workspace_root: Optional[Path] = None) -> MCPServer:
-    root = (workspace_root or GitRunner().get_repo_root() or Path.cwd()).resolve()
+    ws_env = os.getenv("CODEGATE_WORKSPACE") or os.getenv("WORKSPACE")
+    if ws_env:
+        root = Path(ws_env).resolve()
+    else:
+        root = (workspace_root or GitRunner().get_repo_root() or Path.cwd()).resolve()
     codegate_dir = root / ".codegate"
     db_path = codegate_dir / "state.db"
 
