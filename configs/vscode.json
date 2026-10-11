@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "codegate": {
+      "command": "python",
+      "args": ["-m", "codegate.server"],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

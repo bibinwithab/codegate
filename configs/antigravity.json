@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "codegate": {
+      "command": "C:\\Users\\jbibingraceson\\projects\\codegate\\.venv\\Scripts\\python.exe",
+      "args": [
+        "-m",
+        "codegate.server"
+      ]
+    }
+  }
+}

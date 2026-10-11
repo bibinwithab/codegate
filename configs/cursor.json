@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "codegate": {
+      "command": "python",
+      "args": [
+        "-m",
+        "codegate.server"
+      ]
+    }
+  }
+}
